@@ -1,8 +1,54 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const AboutSection = () => {
+  const [animate, setAnimate] = useState(false);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") {
+      setAnimate(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Aktifkan animasi mengisi setiap kali halaman/section masuk viewport
+            setAnimate(true);
+          } else {
+            // Reset ke 0% saat keluar viewport agar siap menganimasi ulang saat disorot kembali
+            setAnimate(false);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    const currentRef = sectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    // Reset dan aktifkan ulang saat user mengklik menu navigasi #about
+    const handleHashChange = () => {
+      if (window.location.hash === "#about") {
+        setAnimate(false);
+        setTimeout(() => setAnimate(true), 50);
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
+
   const sectionStyle = {
-    backgroundColor: "#1a202c", // Hitam pekat sesuai gambar
+    backgroundColor: "#1a202c", // Hitam pekat sesuai tema
     color: "white",
     padding: "80px 0",
   };
@@ -15,16 +61,9 @@ const AboutSection = () => {
     height: "100%",
   };
 
-  const progressBarStyle = (width) => ({
-    width: width,
-    height: "8px",
-    background: "linear-gradient(90deg, #0dcaf0 0%, #8a2be2 100%)",
-    borderRadius: "5px",
-  });
-
   return (
-    <section style={sectionStyle} id="about">
-      {/* CSS internal untuk menangani Hover */}
+    <section style={sectionStyle} id="about" ref={sectionRef}>
+      {/* CSS internal untuk menangani animasi & hover */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -40,6 +79,57 @@ const AboutSection = () => {
         }
         .tool-badge-item:hover .stat-value {
            color: #11112b !important; /* Berubah jadi hitam */
+        }
+
+        /* Track bar progress diagram skill */
+        .skill-track {
+          background-color: #11112b;
+          border: 1px solid #1e1e3f;
+          border-radius: 10px;
+          height: 9px;
+          width: 100%;
+          overflow: hidden;
+          position: relative;
+        }
+
+        /* Bar Progress Diagram Skill */
+        .skill-progress-bar {
+          height: 100%;
+          border-radius: 10px;
+          background: linear-gradient(90deg, #0dcaf0 0%, #8a2be2 100%);
+          box-shadow: 0 0 10px rgba(13, 202, 240, 0.45);
+          position: relative;
+        }
+
+        /* Efek Shimmer Mengalir di atas progress bar */
+        .skill-progress-bar::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.35) 50%,
+            rgba(255, 255, 255, 0) 100%
+          );
+          animation: skillShimmer 2.2s infinite ease-in-out;
+        }
+
+        @keyframes skillShimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+
+        .skill-item:hover .skill-progress-bar {
+          box-shadow: 0 0 16px rgba(13, 202, 240, 0.7), 0 0 8px rgba(138, 43, 226, 0.5);
+          filter: brightness(1.1);
         }
       `,
         }}
@@ -88,23 +178,34 @@ const AboutSection = () => {
           {/* Kolom Kanan: Skills */}
           <div className="col-lg-6">
             <div style={cardStyle}>
-              <h3>My Skills</h3>
-              <div className="mt-4">
+              <h3 className="mb-4">My Skills</h3>
+              <div>
                 {[
                   { name: "React JS", level: "75%" },
                   { name: "JavaScript / TypeScript", level: "70%" },
-                  { name: "HTML / CSS / Bootstrap", level: "75%" },
-                  { name: "UI/UX Design", level: "85%" },
-                  { name: "Adobe Illustrator", level: "80%" },
-                  { name: "Figma", level: "80%" },
+                  { name: "HTML / CSS / Bootstrap", level: "80%" },
+                  { name: "UI/UX Design", level: "75%" },
+                  { name: "Adobe Illustrator", level: "75%" },
+                  { name: "Figma", level: "65%" },
                 ].map((skill, index) => (
-                  <div className="mb-4" key={index}>
+                  <div className="mb-4 skill-item" key={index}>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>{skill.name}</span>
-                      <span className="text-primary">{skill.level}</span>
+                      <span className="fw-medium">{skill.name}</span>
+                      <span className="fw-semibold" style={{ color: "#0dcaf0" }}>
+                        {skill.level}
+                      </span>
                     </div>
-                    <div style={{ backgroundColor: "#0dcaf0", borderRadius: "5px" }}>
-                      <div style={progressBarStyle(skill.level)}></div>
+                    <div className="skill-track">
+                      <div
+                        className="skill-progress-bar"
+                        style={{
+                          width: animate ? skill.level : "0%",
+                          transition: animate
+                            ? "width 1.2s cubic-bezier(0.22, 1, 0.36, 1)"
+                            : "none",
+                          transitionDelay: animate ? `${index * 120}ms` : "0ms",
+                        }}
+                      />
                     </div>
                   </div>
                 ))}
