@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import GambarSugema from "../assets/gambar/sugema.jpg";
 import GambarMi from "../assets/gambar/web-mi-cikembulan.jpg";
 import GambarPortofolio from "../assets/gambar/web-portofolio.jpg";
+import GambarMyclass from "../assets/gambar/logo-myclass.png";
 import { Link } from "react-bootstrap-icons";
 
 const PortfolioSection = () => {
@@ -32,7 +33,17 @@ const PortfolioSection = () => {
       color: "#1b3a5e",
       Link: "#",
     },
+    {
+      title: "MyClass",
+      category: "Fullstack Projects",
+      sub: "React / Node.js",
+      Image: GambarMyclass,
+      color: "#204e3a",
+      Link: "https://myclass-nyd.vercel.app/",
+    },
   ];
+
+  const categories = ["All", ...new Set(projects.map((p) => p.category))];
 
   const filteredProjects =
     filter === "All" ? projects : projects.filter((p) => p.category === filter);
@@ -96,6 +107,45 @@ const PortfolioSection = () => {
         .portfolio-card:hover .view-btn {
           opacity: 1;
         }
+
+        /* Gaya Tombol Kategori seperti Tools & Technologies dengan Efek Gerakan Popup */
+        .category-filter-btn {
+          background-color: #11112b;
+          border: 1px solid #1e1e3f;
+          border-radius: 50px;
+          padding: 8px 22px;
+          color: white;
+          font-size: 0.95rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.34, 0.56, 0.64, 1);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+
+        /* Status Tombol Aktif / Terpilih */
+        .category-filter-btn.active {
+          background-color: #5e5ce6;
+          border-color: #5e5ce6;
+          color: white;
+        }
+
+        /* Efek Hover dengan Gerakan Popup */
+        .category-filter-btn:hover {
+          transform: translateY(-6px) scale(1.08); /* Gerakan popup terangkat dan membesar membal */
+          background-color: #0dcaf0 !important;   /* Warna background biru cyan terang */
+          border-color: #0dcaf0 !important;       /* Border biru cyan */
+          box-shadow: 0 10px 25px rgba(13, 202, 240, 0.45), 0 5px 15px rgba(138, 43, 226, 0.3) !important; /* Efek shadow elevation */
+          color: #11112b !important;              /* Warna teks kontras gelap */
+          z-index: 5;
+        }
+
+        /* Efek saat tombol diklik */
+        .category-filter-btn:active {
+          transform: translateY(-2px) scale(1.02);
+        }
       `,
         }}
       />
@@ -106,19 +156,12 @@ const PortfolioSection = () => {
         </div>
 
         {/* Filter Buttons */}
-        <div className="d-flex justify-content-center gap-2 mb-5 flex-wrap">
-          {["All", "Web Development", "Design Graphics", "React Projects"].map((cat) => (
+        <div className="d-flex justify-content-center gap-3 mb-5 flex-wrap">
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className="btn btn-sm px-4 py-2"
-              style={{
-                backgroundColor: filter === cat ? "#5e5ce6" : "#161632",
-                color: "white",
-                border: "none",
-                borderRadius: "20px",
-                transition: "0.3s",
-              }}
+              className={`category-filter-btn ${filter === cat ? "active" : ""}`}
             >
               {cat}
             </button>
