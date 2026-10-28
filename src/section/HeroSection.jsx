@@ -59,17 +59,33 @@ const HeroSection = () => {
                 <a
                   href="https://www.linkedin.com/in/nuryadi-805a7a388/"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="text-reset"
                 >
                   <i className="bi bi-linkedin"></i>
                 </a>
-                <a href="#" className="text-reset">
+                <a
+                  href="https://www.instagram.com/rahmannulkahfi?rpxt=MXVvMWIyYnE4bHF4Zg=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-reset"
+                >
                   <i className="bi bi-instagram"></i>
                 </a>
-                <a href="#" className="text-reset">
-                  <i className="bi bi-twitter"></i>
+                <a
+                  href="https://www.threads.com/@rahmannulkahfi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-reset"
+                >
+                  <i className="bi bi-threads"></i>
                 </a>
-                <a href="#" className="text-reset">
+                <a
+                  href="https://www.facebook.com/share/1CgXJkVbAb/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-reset"
+                >
                   <i className="bi bi-facebook"></i>
                 </a>
               </div>
